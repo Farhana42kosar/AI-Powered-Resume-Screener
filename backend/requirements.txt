@@ -1,0 +1,10 @@
+streamlit
+fastapi
+python-multipart
+scikit-learn
+pandas
+PyPDF2
+joblib
+io
+re
+requests

@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 import os   
 
-BASE_URL = os.getenv("API_URL", "http://127.0.0.1:8000")
+BASE_URL = os.getenv("API_URL", "==> Available at your primary URL https://ai-powered-resume-screener-2.onrender.com")
 
 
 st.set_page_config(page_title="AI Resume Intelligence", page_icon="📊", layout="wide")

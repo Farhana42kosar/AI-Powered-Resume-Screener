@@ -1,7 +1,10 @@
 import streamlit as st
 import requests
+import os   
 
-# Set Page Config
+BASE_URL = os.getenv("API_URL", "http://127.0.0.1:8000")
+
+
 st.set_page_config(page_title="AI Resume Intelligence", page_icon="📊", layout="wide")
 
 st.title("🚀 AI Resume Intelligence System")
@@ -15,12 +18,12 @@ if uploaded_file:
     
     with st.spinner('🤖 Analyzing resume...'):
         try:
-            response = requests.post("http://127.0.0.1:8000/predict", files=files)
+            
+            response = requests.post(f"{BASE_URL}/predict", files=files)
             
             if response.status_code == 200:
                 data = response.json()
                 
-                # --- SECTION 1: HEADER METRICS ---
                 col_a, col_b, col_c = st.columns(3)
                 
                 with col_a:
@@ -31,14 +34,12 @@ if uploaded_file:
                     st.metric("Model Confidence", f"{conf}%")
                 
                 with col_c:
-                    # THE MISSING PIECE: ATS SCORE
                     ats_raw = data.get('ats_score', "0").replace('%', '')
                     ats_val = float(ats_raw)
                     st.metric("Overall ATS Score", f"{ats_val}%")
 
-                # --- SECTION 2: VISUAL SCORE BAR ---
                 st.write("### 📈 Match Progress")
-                # Change color based on score
+                
                 if ats_val >= 70:
                     st.success(f"Great match! Your resume scored {ats_val}%")
                 elif ats_val >= 40:
@@ -49,7 +50,6 @@ if uploaded_file:
                 st.progress(ats_val / 100)
                 st.markdown("---")
 
-                # --- SECTION 3: JOB RECOMMENDATIONS ---
                 col1, col2 = st.columns([1, 1])
 
                 with col1:
@@ -59,7 +59,6 @@ if uploaded_file:
                         for job in recs:
                             with st.expander(f"**{job['role']}** - {job['match_percentage']}% Match"):
                                 st.write("**Matched Skills:**")
-                                # Display skills as tags
                                 skills = job.get('matched_skills', [])
                                 if skills:
                                     st.write(" , ".join([f"`{s.upper()}`" for s in skills]))
@@ -73,7 +72,6 @@ if uploaded_file:
                     st.write(f"**Filename:** `{data.get('filename')}`")
                     st.write(f"**Analysis Status:** Completed")
                     
-                    # RAW JSON for verification
                     with st.expander("View Raw JSON Data"):
                         st.json(data)
 
